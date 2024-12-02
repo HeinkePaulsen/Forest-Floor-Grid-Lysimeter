@@ -1,14 +1,10 @@
 /*
-Das ist V2 serial, 
-hier werden alle Lesungen (COLLECT_DATA()) auf die serielle Schnittstelle ausgegeben
-Das Messintervall liegt bei 15 Sekunden
-getestet am 28.12. - läuft
-aktuell EC, Photo und Temp ausgeblendet
-Lysi 7 LC ausgetauscht und neu kalibriert am 5.7.24
+This is the code to run the lysimeter in serial mode. All data is posted to the serial port.
+
 */
 
-#define SERIAL_NUMBER 8                      // Hier definieren Sie die Seriennummer OHNE NULLEN!!!
-const long interval = 10000;                 // und hier das Messintervall
+#define SERIAL_NUMBER 8                      // Here you define the serial number
+const long interval = 10000;                 // and here the intervall
 
 #include <Arduino.h>
 #include <SD.h>
@@ -19,7 +15,7 @@ const long interval = 10000;                 // und hier das Messintervall
 #include "SDI12.h"
 #include "RTClib.h"
 
-// Funktionen
+// functions
 void  INIT_PORTS();
 void  SET_MUX16(byte Channel);
 int   READ_ANALOG_MUX16(byte Channel);
@@ -56,7 +52,7 @@ float Read_Temp2();
 float Read_Temp3();
 float Read_Temp4();
 
-// ISR für Kippwaagen
+// ISR for tipping buckets
 void ISR_KIPP_1();
 void ISR_KIPP_2();
 void ISR_KIPP_3();
@@ -91,10 +87,8 @@ void ISR_KIPP_4();
 
 #define WIRE Wire
 
-// Variablen
+// variables
 unsigned long previousMillis = 0; 
-
-
 float Kipp[4]   = {0};
 bool Kipp_Inv_1     = false;
 bool Kipp_Inv_2     = false;
@@ -125,11 +119,9 @@ void dateTime(uint16_t* date, uint16_t* time) {
 // Create object by which to communicate with the SDI-12 bus on SDIPIN
 SDI12 slaveSDI12(SDI12_PIN, SDI12_DIR);
 
-
 // ***************************************************************
-// hier finden sich setup und loop
+// setup and loop
 // ***************************************************************
-
 
 void setup() {
    delay(5000);                           // kurz warten um Verschlucken bei Stromansatz zu verhindern
@@ -151,7 +143,6 @@ void setup() {
      Serial.println("Date  Time  Scale_1  Scale_2  Scale_3 Scale_4 Total TB_1  FD_1  EC_1  Temp_1  TB_2  FD_2  EC_2  Temp_2 TB_3  FD_3  EC_3  Temp_3 TB_4  FD_4  EC_4 Temp_4");   //an aufgenommene Daten anpassen
    }
 
-
 void loop() {
    unsigned long currentMillis = millis(); 
    if (currentMillis - previousMillis >= interval){
@@ -160,10 +151,6 @@ void loop() {
      }
   //SDI_Task();
   }
-
-// ***************************************************************
-// hier beginnen die einzelnen Funktionen
-// ***************************************************************
 
 void TEST_SYSTEM(){
     TEST_RTC();
@@ -521,7 +508,6 @@ void I2C_SCANNER()
 
   Serial.println("********** I2C Scanner End **********");
 }
-
 
 void SETUP_HX711()            //Kalibrierung je nach Seriennummer wird hier die spezifische Kalibrierung durchgeführt
 {
