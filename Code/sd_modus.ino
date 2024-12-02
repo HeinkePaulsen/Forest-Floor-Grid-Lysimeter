@@ -1,19 +1,12 @@
 /*
-Das ist Wasserhaushalt
-in dieser Version werden nur die Load Cells und Tipping Buckets abgefragt, um Aussagen über den Wasserhaushalt zu treffen.
-in dieser Version wird kein DOC gemessen, aber einmal EC und Temperatur.
-Zusätzlich möchte ich jetzt den LCs ihre Kalibrierung über eine Seriennummer geben.
+This is the code to run the lysimeter in SD-card modus.
+In this only the output of the tipping buckets and load cells is reported and written to the SD-card.
+The calibration values for the load cells are assigned via serialnumber.
 */
 
-/*
-mögliche Seriennummern:
-W3: erste grüne Platine (Prototyp 1)
-000: Prototyp 2, grüne Platine
-001: erste blaue auch China
-*/
 
-#define SERIAL_NUMBER 8                      // Hier definieren Sie die Seriennummer
-const unsigned long interval = 20000;        // hier wird das Intervall festgelegt 600000 für alle 10 minuten
+#define SERIAL_NUMBER 8                      // Here you define the serial number
+const unsigned long interval = 20000;        // Here the interval time is assigned e.g. 600000 for 10 minutes
 
 #include <Arduino.h>
 #include <SD.h>
@@ -24,7 +17,7 @@ const unsigned long interval = 20000;        // hier wird das Intervall festgele
 #include "SDI12.h"
 #include "RTClib.h"
 
-// Funktionen
+// functions
 void  INIT_PORTS();
 void  SET_MUX16(byte Channel);
 int   READ_ANALOG_MUX16(byte Channel);
@@ -61,7 +54,7 @@ int Read_Temp2();
 int Read_Temp3();
 int Read_Temp4();
 
-// ISR für Kippwaagen
+// ISR for tipping buckets
 void ISR_KIPP_1();
 void ISR_KIPP_2();
 void ISR_KIPP_3();
@@ -96,9 +89,8 @@ void ISR_KIPP_4();
 
 #define WIRE Wire
 
-// Variablen
+// variables
 unsigned long previousMillis = 0; 
-
 float Kipp[4]   = {0};
 bool Kipp_Inv_1     = false;
 bool Kipp_Inv_2     = false;
@@ -131,7 +123,7 @@ SDI12 slaveSDI12(SDI12_PIN, SDI12_DIR);
 
 
 // ***************************************************************
-// hier finden sich setup und loop
+// setup und loop
 // ***************************************************************
 
 
@@ -168,10 +160,6 @@ void loop() {
      }
   //SDI_Task();
   }
-
-// ***************************************************************
-// hier beginnen die einzelnen Funktionen
-// ***************************************************************
 
 void TEST_SYSTEM(){
     TEST_RTC();
@@ -530,7 +518,6 @@ void I2C_SCANNER()
   Serial.println("********** I2C Scanner End **********");
 }
 
-
 void SETUP_HX711()            //Kalibrierung je nach Seriennummer wird hier die spezifische Kalibrierung durchgeführt
 {
   Serial.println("********** HX711 Setup Start **********");
@@ -541,7 +528,7 @@ void SETUP_HX711()            //Kalibrierung je nach Seriennummer wird hier die 
   scale4.begin(HX_DAT, HX_CLK);
 
 
-#if SERIAL_NUMBER == 1                  // balu ist die erste Chinal Platine die ich getestet habe
+#if SERIAL_NUMBER == 1                  // blau
     SET_MUX16(0);
   delay(5);
   scale1.set_scale(290.36);              //hier muss der Wert aus der Kalibrierung eingesetzt werden
@@ -1101,8 +1088,6 @@ void SETUP_HX711()            //Kalibrierung je nach Seriennummer wird hier die 
   Serial.println("********** HX711 Setup END **********");
 }
 
-
-
 void COLLECT_DATA()
 {
   Serial.println("********** Collect data start **********");
@@ -1190,8 +1175,6 @@ void TEST_ANALOG(){
   }
   Serial.println("********** Analog Test End **********");
 }
-
-
 
 //************** ISRs für die Kippwaagen **************
 void ISR_KIPP_1()
