@@ -1,5 +1,6 @@
 /*
-Hier wird die Kalibrierungssequenz für die Load Cells durchgeführt
+This code contains the calibration procedure for the Load cells and HX711. 
+It needs to be done for every lysimeetr seperately.
 */
 
 #include <Arduino.h>
@@ -11,7 +12,7 @@ Hier wird die Kalibrierungssequenz für die Load Cells durchgeführt
 #include "SDI12.h"
 #include "RTClib.h"
 
-// Funktionen
+// functions
 void  INIT_PORTS();
 void  SET_MUX16(byte Channel);
 int   READ_ANALOG_MUX16(byte Channel);
@@ -56,7 +57,7 @@ void  Run_HX();
 
 #define WIRE Wire
 
-// Variablen
+// variables
 float Kipp[4]   = {0};
 bool Kipp_Inv_1     = false;
 bool Kipp_Inv_2     = false;
@@ -75,8 +76,6 @@ File root;
 SDI12 slaveSDI12(SDI12_PIN, SDI12_DIR);
 
 volatile float f;
-
-
 
 void setup() {
 
@@ -102,8 +101,6 @@ void loop()
 Run_HX();
 SDI_Task();
 }
-
-
 
 void printDirectory(File dir, int numTabs) {
   while (true) {
@@ -336,9 +333,7 @@ void Delte_ARRAY ()
 
 void TEST_SYSTEM()
 {
-  
   TEST_HX711();
-  
 }
 
 void Run_HX()
@@ -357,7 +352,7 @@ void Run_HX()
   Serial.println(f);
   delay(5000);
   
-  
+
   SET_MUX16(1);
   scale2.set_scale();
   delay(5);
@@ -370,7 +365,6 @@ void Run_HX()
   Serial.println(f);
   delay(5000);
 
- 
   SET_MUX16(2);
   scale3.set_scale();
   delay(5);
